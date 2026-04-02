@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAPInsurTech — Free GAP Quoting for Independent Agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #112240;
+    --navy-light: #1d3461;
+    --gold: #c9a84c;
+    --gold-light: #e8c870;
+    --white: #f8f9fc;
+    --muted: #8892a4;
+    --border: rgba(201,168,76,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--gold);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 16px;
+    color: var(--navy);
+    letter-spacing: -1px;
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span { color: var(--gold); }
+
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+    top: -100px; right: -200px;
+    pointer-events: none;
+  }
+
+  .hero-glow-2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(29,52,97,0.8) 0%, transparent 70%);
+    bottom: 0; left: -100px;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 6vw, 76px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.2s;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--gold);
+    position: relative;
+  }
+
+  h1 em::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 0; right: 0;
+    height: 3px;
+    background: var(--gold);
+    opacity: 0.3;
+    border-radius: 2px;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #a8b4c8;
+    max-width: 540px;
+    margin-bottom: 48px;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.35s;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.5s;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 16px 36px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.25s;
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.25);
+  }
+
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.35);
+  }
+
+  .btn-primary svg { transition: transform 0.2s; }
+  .btn-primary:hover svg { transform: translateX(4px); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    padding-bottom: 2px;
+  }
+
+  .btn-secondary:hover { color: var(--white); border-color: var(--white); }
+
+  .hero-proof {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.65s;
+  }
+
+  .proof-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .proof-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .proof-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .proof-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FREE CALLOUT STRIP ── */
+  .free-strip {
+    background: linear-gradient(135deg, var(--gold) 0%, #b8943e 100%);
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .free-strip-text {
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.2px;
+  }
+
+  .free-strip-text span {
+    font-size: 20px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 100px 60px; position: relative; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+  }
+
+  .section-sub {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #a8b4c8;
+    font-weight: 300;
+    max-width: 520px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { background: var(--navy-mid); }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 48px;
+  }
+
+  .step {
+    display: flex;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .step:last-child { border-bottom: none; }
+  .step:hover .step-num { background: var(--gold); color: var(--navy); }
+
+  .step-num {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--gold);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .step-content h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--white);
+  }
+
+  .step-content p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .how-visual {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .how-visual::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+  }
+
+  .visual-card {
+    background: var(--navy);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .visual-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .visual-card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .visual-card.highlight {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.06);
+  }
+
+  .visual-card.highlight .visual-card-value { color: var(--gold); }
+
+  .visual-badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  .carrier-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .carrier-tag {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .carrier-tag.active {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--border);
+    color: var(--gold);
+  }
+
+  /* ── WHY FREE ── */
+  .why-section { background: var(--navy); }
+
+  .why-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .why-header { margin-bottom: 64px; }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .why-card {
+    background: var(--navy);
+    padding: 48px 40px;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .why-card:hover { background: var(--navy-mid); }
+
+  .why-icon {
+    width: 52px; height: 52px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-size: 22px;
+  }
+
+  .why-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .why-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .why-card p strong { color: var(--gold); font-weight: 600; }
+
+  /* ── TRANSPARENCY SECTION ── */
+  .transparency {
+    background: var(--navy-mid);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .transparency-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .fee-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-top: 56px;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .fee-item {
+    flex: 1;
+    padding: 40px 32px;
+    background: rgba(255,255,255,0.02);
+    border-right: 1px solid rgba(255,255,255,0.07);
+    text-align: center;
+    position: relative;
+  }
+
+  .fee-item:last-child { border-right: none; }
+  .fee-item.primary { background: rgba(201,168,76,0.06); }
+
+  .fee-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .fee-item:nth-child(1) .fee-amount { color: var(--gold); }
+  .fee-item:nth-child(2) .fee-amount { color: #4ade80; }
+  .fee-item:nth-child(3) .fee-amount { color: #60a5fa; }
+
+  .fee-label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .fee-desc {
+    font-size: 12px;
+    color: rgba(136,146,164,0.6);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  /* ── CARRIERS ── */
+  .carriers-section { background: var(--navy); }
+
+  .carriers-inner { max-width: 1200px; margin: 0 auto; }
+
+  .carriers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .carrier-card {
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 40px;
+    background: rgba(255,255,255,0.02);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .carrier-card:hover {
+    border-color: var(--border);
+    background: rgba(201,168,76,0.04);
+    transform: translateY(-4px);
+  }
+
+  .carrier-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .carrier-card:hover::before { opacity: 1; }
+
+  .carrier-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .carrier-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+
+  .carrier-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .carrier-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #a8b4c8;
+    font-weight: 400;
+  }
+
+  .carrier-features li::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .carrier-coming {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%);
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .cta-inner { max-width: 680px; margin: 0 auto; }
+
+  .cta-inner .section-title { margin-bottom: 16px; }
+
+  .cta-inner .section-sub {
+    margin: 0 auto 48px;
+    text-align: center;
+    max-width: 480px;
+  }
+
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .cta-fine {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .cta-fine span { color: var(--gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .footer-logo span { color: var(--gold); }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--white); }
+
+  .footer-copy {
+    font-size: 12px;
+    color: rgba(136,146,164,0.5);
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    section { padding: 70px 24px; }
+    .how-grid { grid-template-columns: 1fr; gap: 48px; }
+    .why-grid { grid-template-columns: 1fr; }
+    .carriers-grid { grid-template-columns: 1fr; }
+    .fee-breakdown { flex-direction: column; }
+    .fee-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .fee-item:last-child { border-bottom: none; }
+    footer { flex-direction: column; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .hero-proof { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-mark">G</div>
+    <span class="logo-text">GAP<span>InsurTech</span></span>
+  </a>
+  <a href="https://app.gapinsurtech.com" class="nav-cta">
+    Agent Login
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Now Live — Free for Independent Agents</div>
+    <h1>Quote GAP.<br><em>Keep every dollar.</em><br>Zero platform fees.</h1>
+    <p class="hero-sub">The first free multi-carrier GAP quoting platform built exclusively for independent P&C agents. Compare carrier rates side by side in under two minutes. State-compliant disclosure PDF included.</p>
+    <div class="hero-actions">
+      <a href="https://app.gapinsurtech.com" class="btn-primary">
+        Access Your Portal
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#how-it-works" class="btn-secondary">See how it works →</a>
+    </div>
+    <div class="hero-proof">
+      <div class="proof-item">
+        <div class="proof-num">$0</div>
+        <div class="proof-label">Monthly Cost to Agents</div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">
+        <div class="proof-num">2 min</div>
+        <div class="proof-label">Average Quote Time</div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">
+        <div class="proof-num">Multi</div>
+        <div class="proof-label">Carrier Quotes</div>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">
+        <div class="proof-num">50</div>
+        <div class="proof-label">States Supported</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FREE STRIP -->
+<div class="free-strip">
+  <div class="free-strip-text">
+    <span>100% free</span> for independent agents — no monthly fees, no setup costs, no contracts.
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how-it-works">
+  <div class="how-grid">
+    <div>
+      <p class="section-label reveal">How It Works</p>
+      <h2 class="section-title reveal">Three steps.<br>Two minutes.<br>One platform.</h2>
+      <p class="section-sub reveal">Built for agents who are mid-appointment and need a GAP quote fast — no phone calls, no callbacks, no paperwork.</p>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Submit Client Details</h3>
+            <p>Enter vehicle value, loan balance, term, and state into a simple form. Takes 60 seconds. No login required for the client — this is your tool.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Compare Carrier Rates</h3>
+            <p>See side-by-side quotes from multiple carriers with your commission amount per carrier clearly visible. Pick the best fit for your client.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Generate the Disclosure</h3>
+            <p>One click produces a state-compliant GAP disclosure PDF, pre-filled with your client's details. Present it on the spot. Done.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="how-visual reveal">
+      <div class="visual-card">
+        <div class="visual-card-label">Client Vehicle</div>
+        <div class="visual-card-value">2023 Toyota Camry</div>
+        <div class="carrier-row">
+          <span class="carrier-tag">$28,400 Value</span>
+          <span class="carrier-tag">$31,200 Loan</span>
+        </div>
+      </div>
+      <div class="visual-card highlight">
+        <div class="visual-badge">Best Rate</div>
+        <div class="visual-card-label">Carrier A</div>
+        <div class="visual-card-value">$495 / policy</div>
+        <div class="carrier-row">
+          <span class="carrier-tag active">Your commission: $55</span>
+        </div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-card-label">Carrier B</div>
+        <div class="visual-card-value">$520 / policy</div>
+        <div class="carrier-row">
+          <span class="carrier-tag active">Your commission: $52</span>
+        </div>
+      </div>
+      <div style="margin-top:20px; padding:16px 0; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--muted);">State-compliant disclosure PDF</span>
+        <span style="font-size:12px; color:#4ade80; font-weight:600;">✓ Ready to generate</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY FREE -->
+<section class="why-section">
+  <div class="why-inner">
+    <div class="why-header">
+      <p class="section-label reveal">Why Free?</p>
+      <h2 class="section-title reveal">Aligned with your success.<br>Not your overhead.</h2>
+      <p class="section-sub reveal">We built the pricing model around how agents actually win — more policies bound, more commission earned. Our business grows when yours does.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon">🎯</div>
+        <h3>No Monthly Fee. Ever.</h3>
+        <p>The portal is completely free to access and use. Quote as many clients as you want with <strong>zero subscription cost</strong>. There are no tiers, no limits, no upsells.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">💳</div>
+        <h3>$15 Convenience Fee at Binding</h3>
+        <p>When a policy is bound, a <strong>$15 convenience fee</strong> is charged to the insured at checkout — not to you. It's disclosed transparently at the point of sale.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">💰</div>
+        <h3>Your Commission. 100% Yours.</h3>
+        <p>We never touch your commission. Your carrier relationship, your rate, your payout. GAPInsurTech is the platform — <strong>you own the client</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRANSPARENCY -->
+<section class="transparency">
+  <div class="transparency-inner">
+    <p class="section-label reveal">Full Transparency</p>
+    <h2 class="section-title reveal">Exactly how the money flows.</h2>
+    <p class="section-sub reveal" style="margin:0 auto; text-align:center;">No hidden fees. No surprises. Here's what happens at binding on a typical policy.</p>
+    <div class="fee-breakdown reveal">
+      <div class="fee-item">
+        <div class="fee-amount">$495</div>
+        <div class="fee-label">GAP Policy Premium</div>
+        <div class="fee-desc">Paid by insured to carrier</div>
+      </div>
+      <div class="fee-item">
+        <div class="fee-amount">~$50</div>
+        <div class="fee-label">Your Commission</div>
+        <div class="fee-desc">Paid directly to you by carrier</div>
+      </div>
+      <div class="fee-item">
+        <div class="fee-amount">$15</div>
+        <div class="fee-label">Platform Fee</div>
+        <div class="fee-desc">Charged to insured at checkout</div>
+      </div>
+      <div class="fee-item">
+        <div class="fee-amount">$0</div>
+        <div class="fee-label">Your Cost</div>
+        <div class="fee-desc">Always free for agents</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARRIERS -->
+<section class="carriers-section">
+  <div class="carriers-inner">
+    <p class="section-label reveal">Carrier Network</p>
+    <h2 class="section-title reveal">Filed GAP insurance.<br>Not waivers.</h2>
+    <p class="section-sub reveal">GAPInsurTech works exclusively with carriers offering filed GAP insurance products — real coverage backed by admitted insurers, compliant in all 50 states.</p>
+    <div class="carriers-grid" style="grid-template-columns: repeat(3,1fr); margin-top:56px;">
+      <div class="carrier-card reveal">
+        <div class="why-icon" style="margin-bottom:20px;">🏛️</div>
+        <div class="carrier-name" style="font-size:19px;">Filed Products Only</div>
+        <div class="carrier-sub">Every carrier on the platform has a state-filed GAP insurance product — not a dealer waiver. Your clients get real insurance.</div>
+      </div>
+      <div class="carrier-card reveal">
+        <div class="why-icon" style="margin-bottom:20px;">⚖️</div>
+        <div class="carrier-name" style="font-size:19px;">State Compliant</div>
+        <div class="carrier-sub">Disclosure PDFs are generated to match state-specific GAP insurance requirements. All 50 states supported at launch.</div>
+      </div>
+      <div class="carrier-card reveal">
+        <div class="why-icon" style="margin-bottom:20px;">🤝</div>
+        <div class="carrier-name" style="font-size:19px;">Agent Appointed</div>
+        <div class="carrier-sub">You maintain your direct carrier appointment and commission relationship. GAPInsurTech is the quoting layer — you own the client.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <p class="section-label reveal">Get Started</p>
+    <h2 class="section-title reveal">Free to join.<br>Free to quote.<br>Free forever.</h2>
+    <p class="section-sub reveal">Independent P&C agents licensed in all 50 states can request access today. SmartChoice network agents — your enrollment is pre-authorized.</p>
+    <div class="cta-actions reveal">
+      <a href="https://app.gapinsurtech.com" class="btn-primary">
+        Access Agent Portal
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <p class="cta-fine reveal">No credit card. No contract. <span>$0/month.</span> Just quote more GAP.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">GAP<span>InsurTech</span></div>
+  <ul class="footer-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="mailto:hello@gapinsurtech.com">Contact</a></li>
+    <li><a href="https://app.gapinsurtech.com">Agent Portal</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 GAPInsurTech. All rights reserved.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
